@@ -6,42 +6,42 @@
       "idx": 0,
       "version": "7",
       "when": 1788971267212,
-      "tag": "0000_living_spirit",
+      "tag": "0000_create_auth_and_budget_tables",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
       "when": 1788971773246,
-      "tag": "0001_old_iceman",
+      "tag": "0001_fix_accounts_expires_at_type",
       "breakpoints": true
     },
     {
       "idx": 2,
       "version": "7",
       "when": 1788979317238,
-      "tag": "0002_melodic_ted_forrester",
+      "tag": "0002_add_net_worth_tables",
       "breakpoints": true
     },
     {
       "idx": 3,
       "version": "7",
       "when": 1789019000602,
-      "tag": "0003_confused_flatman",
+      "tag": "0003_add_dues_table",
       "breakpoints": true
     },
     {
       "idx": 4,
       "version": "7",
       "when": 1789023257537,
-      "tag": "0004_superb_smiling_tiger",
+      "tag": "0004_add_coupons_table",
       "breakpoints": true
     },
     {
       "idx": 5,
       "version": "7",
       "when": 1789050943766,
-      "tag": "0005_fantastic_lorna_dane",
+      "tag": "0005_add_financial_actions_and_goals",
       "breakpoints": true
     }
   ]

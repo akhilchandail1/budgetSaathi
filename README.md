@@ -2,6 +2,8 @@
 
 BudgetSaathi is a personal-finance companion for planning monthly budgets, recording income and expenses, and keeping the rest of your financial life—net worth, dues, goals, and offers—in one place. It is built for Indian currency (INR) and stores each account's data separately in PostgreSQL.
 
+New to the project? Read the [Codebase Guide](CODEBASE_GUIDE.md) for a simple walkthrough of its architecture, components, data flow, and security model.
+
 ## Features
 
 - **Monthly budgeting:** Set income and expense categories with monthly budgets, then compare planned and actual spending by month.
