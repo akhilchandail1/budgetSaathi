@@ -1,10 +1,11 @@
-import type { Category, MonthKey, Transaction } from "./types";
+import type { Category, CategoryBudget, MonthKey, Transaction } from "./types";
 import { monthKeyFromISO } from "./format";
 
 export interface CategoryMonthRow {
   category: Category;
   actual: number;
   budget: number | null;
+  isCustomBudget: boolean; // true when budget comes from a per-month override, not the category default
   difference: number | null; // budget - actual, expense/investment categories only
   percentSpent: number | null; // actual / budget * 100, expense/investment categories only
 }
@@ -24,7 +25,8 @@ export interface MonthSummary {
 export function buildMonthSummary(
   categories: Category[],
   transactions: Transaction[],
-  month: MonthKey
+  month: MonthKey,
+  categoryBudgets: CategoryBudget[] = []
 ): MonthSummary {
   const actualByCategory = new Map<string, number>();
   for (const t of transactions) {
@@ -32,13 +34,21 @@ export function buildMonthSummary(
     actualByCategory.set(t.categoryId, (actualByCategory.get(t.categoryId) ?? 0) + t.amount);
   }
 
+  const overrideByCategory = new Map<string, number>();
+  for (const b of categoryBudgets) {
+    if (b.month === month) overrideByCategory.set(b.categoryId, b.amount);
+  }
+
   const buildRow = (category: Category): CategoryMonthRow => {
     const actual = actualByCategory.get(category.id) ?? 0;
-    const budget = category.type === "expense" || category.type === "investment" ? category.monthlyBudget : null;
+    const hasBudget = category.type === "expense" || category.type === "investment";
+    const override = overrideByCategory.get(category.id);
+    const budget = !hasBudget ? null : override ?? category.monthlyBudget;
     return {
       category,
       actual,
       budget,
+      isCustomBudget: hasBudget && override != null,
       difference: budget != null ? budget - actual : null,
       percentSpent: budget != null ? (budget > 0 ? (actual / budget) * 100 : actual > 0 ? 100 : 0) : null,
     };

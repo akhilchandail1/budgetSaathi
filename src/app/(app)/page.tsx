@@ -1,15 +1,22 @@
 import { auth } from "@/auth";
-import { getCategories, getTransactions } from "@/db/queries";
+import { getCategories, getCategoryBudgets, getTransactions } from "@/db/queries";
 import { DashboardClient } from "@/components/dashboard/DashboardClient";
 
 export default async function DashboardPage() {
   const session = await auth();
   const userId = session!.user.id;
 
-  const [categories, transactions] = await Promise.all([
+  const [categories, transactions, categoryBudgets] = await Promise.all([
     getCategories(userId),
     getTransactions(userId),
+    getCategoryBudgets(userId),
   ]);
 
-  return <DashboardClient categories={categories} transactions={transactions} />;
+  return (
+    <DashboardClient
+      categories={categories}
+      transactions={transactions}
+      categoryBudgets={categoryBudgets}
+    />
+  );
 }

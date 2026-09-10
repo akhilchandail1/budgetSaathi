@@ -43,6 +43,13 @@
       "when": 1789050943766,
       "tag": "0005_add_financial_actions_and_goals",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1789074680036,
+      "tag": "0006_category_budgets",
+      "breakpoints": true
     }
   ]
 }

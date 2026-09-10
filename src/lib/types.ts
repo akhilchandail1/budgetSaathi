@@ -31,3 +31,11 @@ export interface Transaction {
 
 /** month key format: "YYYY-MM" */
 export type MonthKey = string;
+
+/** A per-month override of a category's budget — falls back to Category.monthlyBudget when absent. */
+export interface CategoryBudget {
+  id: string;
+  categoryId: string;
+  month: MonthKey;
+  amount: number;
+}

@@ -3,6 +3,7 @@ import { cache } from "react";
 import { db } from "@/db";
 import {
   categories,
+  categoryBudgets,
   coupons,
   dues,
   financeActions,
@@ -11,7 +12,7 @@ import {
   netWorthSnapshots,
   transactions,
 } from "@/db/schema";
-import type { Category, PaymentMode, Transaction } from "@/lib/types";
+import type { Category, CategoryBudget, PaymentMode, Transaction } from "@/lib/types";
 import type { NetWorthItem, NetWorthItemType, NetWorthSnapshot } from "@/lib/netWorth";
 import type { BillingCycle, DuesCategory, DuesItem } from "@/lib/dues";
 import type { CouponItem, CouponType, CouponValueType } from "@/lib/coupons";
@@ -49,6 +50,20 @@ export const getCategories = cache(async (userId: string): Promise<Category[]> =
 export const getTransactions = cache(async (userId: string): Promise<Transaction[]> => {
   const rows = await db.select().from(transactions).where(eq(transactions.userId, userId));
   return rows.map(toTransaction).sort((a, b) => b.date.localeCompare(a.date));
+});
+
+function toCategoryBudget(row: typeof categoryBudgets.$inferSelect): CategoryBudget {
+  return {
+    id: row.id,
+    categoryId: row.categoryId,
+    month: row.month,
+    amount: Number(row.amount),
+  };
+}
+
+export const getCategoryBudgets = cache(async (userId: string): Promise<CategoryBudget[]> => {
+  const rows = await db.select().from(categoryBudgets).where(eq(categoryBudgets.userId, userId));
+  return rows.map(toCategoryBudget);
 });
 
 export async function categoryHasTransactions(userId: string, categoryId: string): Promise<boolean> {

@@ -11,21 +11,23 @@ import { Button } from "@/components/ui/button";
 import { formatINR, formatMonthLabel, getMonthKey } from "@/lib/format";
 import { buildMonthSummary } from "@/lib/selectors";
 import { generatePdfReport } from "@/lib/pdf";
-import type { Category, Transaction } from "@/lib/types";
+import type { Category, CategoryBudget, Transaction } from "@/lib/types";
 
 export function DashboardClient({
   categories,
   transactions,
+  categoryBudgets,
 }: {
   categories: Category[];
   transactions: Transaction[];
+  categoryBudgets: CategoryBudget[];
 }) {
   const [month, setMonth] = useState(getMonthKey());
   const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
 
   const summary = useMemo(
-    () => buildMonthSummary(categories, transactions, month),
-    [categories, transactions, month]
+    () => buildMonthSummary(categories, transactions, month, categoryBudgets),
+    [categories, transactions, month, categoryBudgets]
   );
 
   const activeCategory = categories.find((c) => c.id === activeCategoryId) ?? null;
@@ -92,6 +94,7 @@ export function DashboardClient({
             rows={summary.expenseRows}
             type="expense"
             categories={categories}
+            month={month}
             onCategoryClick={setActiveCategoryId}
           />
         </TabsContent>
@@ -100,6 +103,7 @@ export function DashboardClient({
             rows={summary.incomeRows}
             type="income"
             categories={categories}
+            month={month}
             onCategoryClick={setActiveCategoryId}
           />
         </TabsContent>
@@ -108,6 +112,7 @@ export function DashboardClient({
             rows={summary.investmentRows}
             type="investment"
             categories={categories}
+            month={month}
             onCategoryClick={setActiveCategoryId}
           />
         </TabsContent>

@@ -1,22 +1,26 @@
 "use client";
 
-import { Plus } from "lucide-react";
+import { Pencil, Plus } from "lucide-react";
 import type { CategoryMonthRow } from "@/lib/selectors";
-import type { Category } from "@/lib/types";
+import type { Category, MonthKey } from "@/lib/types";
 import { formatINR } from "@/lib/format";
 import { getCategoryIcon } from "@/lib/icons";
 import { Progress } from "@/components/ui/progress";
 import { QuickLogger } from "@/components/logger/QuickLogger";
+import { CategoryBudgetDialog } from "./CategoryBudgetDialog";
+import { cn } from "@/lib/utils";
 
 export function CategoryTable({
   rows,
   type,
   categories,
+  month,
   onCategoryClick,
 }: {
   rows: CategoryMonthRow[];
   type: "income" | "expense" | "investment";
   categories: Category[];
+  month: MonthKey;
   onCategoryClick: (categoryId: string) => void;
 }) {
   const hasBudgetColumns = type === "expense" || type === "investment";
@@ -59,8 +63,36 @@ export function CategoryTable({
                   </span>
                 </td>
                 {hasBudgetColumns && (
-                  <td className="px-4 py-2.5 text-right tabular-nums text-zinc-500">
-                    {row.budget != null ? formatINR(row.budget) : "—"}
+                  <td
+                    className="px-4 py-2.5 text-right tabular-nums text-zinc-500"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <CategoryBudgetDialog
+                      category={row.category}
+                      month={month}
+                      budget={row.budget}
+                      isCustomBudget={row.isCustomBudget}
+                      trigger={
+                        <button
+                          title={`Edit ${row.category.name} budget for this month`}
+                          className="group inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 hover:bg-zinc-100"
+                        >
+                          {row.isCustomBudget && (
+                            <span
+                              title="Custom budget for this month"
+                              className="h-1.5 w-1.5 rounded-full bg-indigo-500"
+                            />
+                          )}
+                          <span>{row.budget != null ? formatINR(row.budget) : "—"}</span>
+                          <Pencil
+                            className={cn(
+                              "h-3 w-3 text-zinc-300 opacity-0 group-hover:opacity-100",
+                              "shrink-0"
+                            )}
+                          />
+                        </button>
+                      }
+                    />
                   </td>
                 )}
                 <td className="px-4 py-2.5 text-right tabular-nums text-zinc-700">

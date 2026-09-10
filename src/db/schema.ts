@@ -77,6 +77,25 @@ export const categories = pgTable("categories", {
   createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
 });
 
+/** Per-month budget override for a category — falls back to categories.monthlyBudget when absent. */
+export const categoryBudgets = pgTable(
+  "category_budgets",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    categoryId: uuid("category_id")
+      .notNull()
+      .references(() => categories.id, { onDelete: "cascade" }),
+    month: text("month").notNull(), // YYYY-MM
+    amount: numeric("amount", { precision: 12, scale: 2 }).notNull(),
+    createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex("category_budgets_category_month_idx").on(t.categoryId, t.month)]
+);
+
 export const paymentModeValues = [
   "UPI",
   "Credit Card",

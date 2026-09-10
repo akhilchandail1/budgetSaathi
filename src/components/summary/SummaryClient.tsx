@@ -26,7 +26,7 @@ import {
   weekKeyFromISO,
   yearKeyFromISO,
 } from "@/lib/format";
-import type { Category, Transaction } from "@/lib/types";
+import type { Category, CategoryBudget, Transaction } from "@/lib/types";
 
 type Granularity = "weekly" | "monthly" | "yearly";
 
@@ -50,9 +50,11 @@ const DEFAULT_RANGE: Record<Granularity, number> = { weekly: 8, monthly: 6, year
 export function SummaryClient({
   categories,
   transactions,
+  categoryBudgets,
 }: {
   categories: Category[];
   transactions: Transaction[];
+  categoryBudgets: CategoryBudget[];
 }) {
   const [granularity, setGranularity] = useState<Granularity>("monthly");
   const [rangeSize, setRangeSize] = useState(DEFAULT_RANGE.monthly);
@@ -87,9 +89,12 @@ export function SummaryClient({
   const monthlySummaries = useMemo(
     () =>
       granularity === "monthly"
-        ? periods.map((m) => ({ period: m, summary: buildMonthSummary(categories, transactions, m) }))
+        ? periods.map((m) => ({
+            period: m,
+            summary: buildMonthSummary(categories, transactions, m, categoryBudgets),
+          }))
         : [],
-    [granularity, periods, categories, transactions]
+    [granularity, periods, categories, transactions, categoryBudgets]
   );
 
   const periodTotals = useMemo(
