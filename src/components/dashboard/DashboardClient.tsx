@@ -50,6 +50,16 @@ export function DashboardClient({
           columns: ["Category", "Actual"],
           rows: summary.incomeRows.map((r) => [r.category.name, formatINR(r.actual)]),
         },
+        {
+          heading: "Investments",
+          columns: ["Category", "Budget", "Actual", "% Used"],
+          rows: summary.investmentRows.map((r) => [
+            r.category.name,
+            r.budget != null ? formatINR(r.budget) : "—",
+            formatINR(r.actual),
+            r.percentSpent != null ? `${Math.round(r.percentSpent)}%` : "—",
+          ]),
+        },
       ],
     });
   }
@@ -59,7 +69,7 @@ export function DashboardClient({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-lg font-semibold text-zinc-900">Dashboard</h1>
-          <p className="text-sm text-zinc-500">Track income and expenses, side by side.</p>
+          <p className="text-sm text-zinc-500">Track income, expenses, and investments, side by side.</p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={handleExportPdf}>
@@ -75,6 +85,7 @@ export function DashboardClient({
         <TabsList>
           <TabsTrigger value="expense">Expenses</TabsTrigger>
           <TabsTrigger value="income">Income</TabsTrigger>
+          <TabsTrigger value="investment">Investments</TabsTrigger>
         </TabsList>
         <TabsContent value="expense" className="mt-4">
           <CategoryTable
@@ -88,6 +99,14 @@ export function DashboardClient({
           <CategoryTable
             rows={summary.incomeRows}
             type="income"
+            categories={categories}
+            onCategoryClick={setActiveCategoryId}
+          />
+        </TabsContent>
+        <TabsContent value="investment" className="mt-4">
+          <CategoryTable
+            rows={summary.investmentRows}
+            type="investment"
             categories={categories}
             onCategoryClick={setActiveCategoryId}
           />

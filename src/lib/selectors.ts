@@ -5,16 +5,19 @@ export interface CategoryMonthRow {
   category: Category;
   actual: number;
   budget: number | null;
-  difference: number | null; // budget - actual, expense categories only
-  percentSpent: number | null; // actual / budget * 100, expense categories only
+  difference: number | null; // budget - actual, expense/investment categories only
+  percentSpent: number | null; // actual / budget * 100, expense/investment categories only
 }
 
 export interface MonthSummary {
   expenseRows: CategoryMonthRow[];
   incomeRows: CategoryMonthRow[];
+  investmentRows: CategoryMonthRow[];
   totalExpense: number;
   totalIncome: number;
+  totalInvestment: number;
   totalBudget: number;
+  totalInvestmentBudget: number;
   net: number;
 }
 
@@ -31,7 +34,7 @@ export function buildMonthSummary(
 
   const buildRow = (category: Category): CategoryMonthRow => {
     const actual = actualByCategory.get(category.id) ?? 0;
-    const budget = category.type === "expense" ? category.monthlyBudget : null;
+    const budget = category.type === "expense" || category.type === "investment" ? category.monthlyBudget : null;
     return {
       category,
       actual,
@@ -44,17 +47,23 @@ export function buildMonthSummary(
   const active = categories.filter((c) => !c.archived);
   const expenseRows = active.filter((c) => c.type === "expense").map(buildRow);
   const incomeRows = active.filter((c) => c.type === "income").map(buildRow);
+  const investmentRows = active.filter((c) => c.type === "investment").map(buildRow);
 
   const totalExpense = expenseRows.reduce((sum, r) => sum + r.actual, 0);
   const totalIncome = incomeRows.reduce((sum, r) => sum + r.actual, 0);
+  const totalInvestment = investmentRows.reduce((sum, r) => sum + r.actual, 0);
   const totalBudget = expenseRows.reduce((sum, r) => sum + (r.budget ?? 0), 0);
+  const totalInvestmentBudget = investmentRows.reduce((sum, r) => sum + (r.budget ?? 0), 0);
 
   return {
     expenseRows,
     incomeRows,
+    investmentRows,
     totalExpense,
     totalIncome,
+    totalInvestment,
     totalBudget,
+    totalInvestmentBudget,
     net: totalIncome - totalExpense,
   };
 }
@@ -63,6 +72,7 @@ export interface PeriodTotals {
   period: string;
   income: number;
   expense: number;
+  investment: number;
 }
 
 /** Buckets transactions into arbitrary periods (week/month/year) by a caller-supplied key function. */
@@ -73,14 +83,16 @@ export function buildPeriodTotals(
   periodKeyFromISO: (iso: string) => string
 ): PeriodTotals[] {
   const typeByCategory = new Map(categories.map((c) => [c.id, c.type]));
-  const totals = new Map<string, { income: number; expense: number }>(
-    periods.map((p) => [p, { income: 0, expense: 0 }])
+  const totals = new Map<string, { income: number; expense: number; investment: number }>(
+    periods.map((p) => [p, { income: 0, expense: 0, investment: 0 }])
   );
 
   for (const t of transactions) {
     const bucket = totals.get(periodKeyFromISO(t.date));
     if (!bucket) continue;
-    if (typeByCategory.get(t.categoryId) === "income") bucket.income += t.amount;
+    const type = typeByCategory.get(t.categoryId);
+    if (type === "income") bucket.income += t.amount;
+    else if (type === "investment") bucket.investment += t.amount;
     else bucket.expense += t.amount;
   }
 
@@ -91,6 +103,7 @@ export interface DaySummary {
   date: string; // ISO
   totalExpense: number;
   totalIncome: number;
+  totalInvestment: number;
   transactionCount: number;
 }
 
@@ -109,9 +122,12 @@ export function buildCalendarSummary(
       date: t.date,
       totalExpense: 0,
       totalIncome: 0,
+      totalInvestment: 0,
       transactionCount: 0,
     };
-    if (typeByCategory.get(t.categoryId) === "income") entry.totalIncome += t.amount;
+    const type = typeByCategory.get(t.categoryId);
+    if (type === "income") entry.totalIncome += t.amount;
+    else if (type === "investment") entry.totalInvestment += t.amount;
     else entry.totalExpense += t.amount;
     entry.transactionCount += 1;
     byDate.set(t.date, entry);

@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 const TYPE_GROUPS = [
   { id: "expense" as const, label: "Expense" },
   { id: "income" as const, label: "Income" },
+  { id: "investment" as const, label: "Investment" },
 ];
 
 export function CategoryCombobox({

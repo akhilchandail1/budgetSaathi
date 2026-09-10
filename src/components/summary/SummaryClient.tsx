@@ -136,7 +136,7 @@ export function SummaryClient({
     for (const t of transactions) {
       if (!periodSet.has(periodKeyFromISO(t.date))) continue;
       const category = categories.find((c) => c.id === t.categoryId);
-      if (!category || category.type === "income") continue;
+      if (!category || category.type !== "expense") continue;
       totals.set(category.name, (totals.get(category.name) ?? 0) + t.amount);
     }
     return Array.from(totals.entries()).map(([name, value]) => ({ name, value }));

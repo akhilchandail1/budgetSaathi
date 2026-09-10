@@ -20,6 +20,9 @@ export const DEFAULT_CATEGORY_SEED: {
   { name: "Freelance", type: "income", icon: "Briefcase", monthlyBudget: null },
   { name: "Investment Return", type: "income", icon: "TrendingUp", monthlyBudget: null },
   { name: "Gift", type: "income", icon: "Gift", monthlyBudget: null },
+  { name: "SIP", type: "investment", icon: "Repeat", monthlyBudget: null },
+  { name: "Stocks", type: "investment", icon: "TrendingUp", monthlyBudget: null },
+  { name: "Liquid Fund", type: "investment", icon: "PiggyBank", monthlyBudget: null },
 ];
 
 export async function seedDefaultCategories(userId: string) {

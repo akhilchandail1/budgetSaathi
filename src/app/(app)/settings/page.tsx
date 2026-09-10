@@ -12,7 +12,7 @@ export default async function SettingsPage() {
       <div>
         <h1 className="text-lg font-semibold text-zinc-900">Settings</h1>
         <p className="text-sm text-zinc-500">
-          Manage your income and expense categories, icons, and monthly budgets.
+          Manage your income, expense, and investment categories, icons, and monthly budgets.
         </p>
       </div>
       <CategoryManager categories={categories} />

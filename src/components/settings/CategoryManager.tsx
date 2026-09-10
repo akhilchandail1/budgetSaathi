@@ -23,6 +23,10 @@ function CategorySection({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const rows = categories.filter((c) => c.type === type && !c.archived);
+  const hasBudgets = type === "expense" || type === "investment";
+  const totalBudget = hasBudgets
+    ? rows.reduce((sum, c) => sum + (c.monthlyBudget ?? 0), 0)
+    : null;
 
   function handleDelete(category: Category) {
     if (!window.confirm(`Delete "${category.name}"?`)) return;
@@ -40,7 +44,12 @@ function CategorySection({
   return (
     <Card>
       <CardHeader className="flex-row items-center justify-between">
-        <CardTitle className="text-sm font-semibold text-zinc-900">{title}</CardTitle>
+        <div>
+          <CardTitle className="text-sm font-semibold text-zinc-900">{title}</CardTitle>
+          {hasBudgets && (
+            <p className="text-xs text-zinc-400">Total monthly budget: {formatINR(totalBudget ?? 0)}</p>
+          )}
+        </div>
         <CategoryForm
           defaultType={type}
           trigger={
@@ -66,7 +75,7 @@ function CategorySection({
                   <Icon className="h-4 w-4" />
                 </span>
                 {category.name}
-                {type === "expense" && category.monthlyBudget != null && (
+                {hasBudgets && category.monthlyBudget != null && (
                   <span className="text-xs text-zinc-400">· {formatINR(category.monthlyBudget)}/mo</span>
                 )}
               </span>
@@ -101,6 +110,7 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
       <CategorySection title="Expense Categories" type="expense" categories={categories} />
       <CategorySection title="Income Categories" type="income" categories={categories} />
+      <CategorySection title="Investment Categories" type="investment" categories={categories} />
     </div>
   );
 }

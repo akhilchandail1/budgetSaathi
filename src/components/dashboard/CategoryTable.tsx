@@ -15,10 +15,12 @@ export function CategoryTable({
   onCategoryClick,
 }: {
   rows: CategoryMonthRow[];
-  type: "income" | "expense";
+  type: "income" | "expense" | "investment";
   categories: Category[];
   onCategoryClick: (categoryId: string) => void;
 }) {
+  const hasBudgetColumns = type === "expense" || type === "investment";
+
   if (rows.length === 0) {
     return (
       <div className="rounded-xl border border-dashed border-zinc-200 bg-white py-10 text-center text-sm text-zinc-400">
@@ -33,9 +35,9 @@ export function CategoryTable({
         <thead>
           <tr className="border-b border-zinc-100 text-left text-xs font-medium uppercase tracking-wide text-zinc-400">
             <th className="px-4 py-3 font-medium">Category</th>
-            {type === "expense" && <th className="px-4 py-3 text-right font-medium">Budget (₹)</th>}
+            {hasBudgetColumns && <th className="px-4 py-3 text-right font-medium">Budget (₹)</th>}
             <th className="px-4 py-3 text-right font-medium">Actual (₹)</th>
-            {type === "expense" && <th className="px-4 py-3 font-medium">% Used</th>}
+            {hasBudgetColumns && <th className="px-4 py-3 font-medium">% Used</th>}
             <th className="w-10 px-4 py-3" />
           </tr>
         </thead>
@@ -56,7 +58,7 @@ export function CategoryTable({
                     {row.category.name}
                   </span>
                 </td>
-                {type === "expense" && (
+                {hasBudgetColumns && (
                   <td className="px-4 py-2.5 text-right tabular-nums text-zinc-500">
                     {row.budget != null ? formatINR(row.budget) : "—"}
                   </td>
@@ -64,7 +66,7 @@ export function CategoryTable({
                 <td className="px-4 py-2.5 text-right tabular-nums text-zinc-700">
                   {formatINR(row.actual)}
                 </td>
-                {type === "expense" && (
+                {hasBudgetColumns && (
                   <td className="px-4 py-2.5">
                     {row.percentSpent != null ? (
                       <div className="flex items-center gap-2">

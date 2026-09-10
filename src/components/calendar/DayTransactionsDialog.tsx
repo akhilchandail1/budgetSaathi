@@ -65,7 +65,9 @@ export function DayTransactionsDialog({
                         <span
                           className={cn(
                             "text-sm font-medium tabular-nums",
-                            category?.type === "income" ? "text-emerald-600" : "text-zinc-900"
+                            category?.type === "income" && "text-emerald-600",
+                            category?.type === "investment" && "text-indigo-600",
+                            (!category || category.type === "expense") && "text-zinc-900"
                           )}
                         >
                           {category?.type === "income" ? "+" : "−"}

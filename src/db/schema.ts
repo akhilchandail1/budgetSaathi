@@ -61,7 +61,7 @@ export const verificationTokens = pgTable(
   (vt) => [primaryKey({ columns: [vt.identifier, vt.token] })]
 );
 
-export const categoryTypeValues = ["income", "expense"] as const;
+export const categoryTypeValues = ["income", "expense", "investment"] as const;
 export type CategoryType = (typeof categoryTypeValues)[number];
 
 export const categories = pgTable("categories", {

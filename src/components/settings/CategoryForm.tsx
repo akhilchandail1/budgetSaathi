@@ -49,7 +49,12 @@ export function CategoryForm({
       setError("Enter a valid monthly budget");
       return;
     }
-    const input = { name: name.trim(), type, icon, monthlyBudget: type === "expense" ? parsedBudget : null };
+    const input = {
+      name: name.trim(),
+      type,
+      icon,
+      monthlyBudget: type === "expense" || type === "investment" ? parsedBudget : null,
+    };
     startTransition(async () => {
       const result = category
         ? await updateCategory(category.id, input)
@@ -85,9 +90,10 @@ export function CategoryForm({
               <Select value={type} onChange={(e) => setType(e.target.value as CategoryType)}>
                 <option value="expense">Expense</option>
                 <option value="income">Income</option>
+                <option value="investment">Investment</option>
               </Select>
             </div>
-            {type === "expense" && (
+            {(type === "expense" || type === "investment") && (
               <div>
                 <label className="mb-1 block text-xs font-medium text-zinc-500">
                   Monthly Budget (₹)
