@@ -25,6 +25,11 @@ export async function startDemo() {
   await signIn("demo", { redirectTo: "/" });
 }
 
+export async function leaveDemo(formData: FormData) {
+  const destination = formData.get("destination") === "signup" ? "/signup" : "/login";
+  await signOut({ redirectTo: destination });
+}
+
 export async function signupAction(
   _prevState: AuthFormState,
   formData: FormData

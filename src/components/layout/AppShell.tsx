@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { usePathname } from "next/navigation";
 import {
   CalendarClock,
@@ -16,6 +17,9 @@ import { DEMO_EMAIL } from "@/lib/demo.constants";
 import { AccountMenu } from "./AccountMenu";
 import { Logo } from "./Logo";
 import { QuickLogger } from "@/components/logger/QuickLogger";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { leaveDemo } from "@/app/actions/auth";
 import type { Category, Transaction } from "@/lib/types";
 
 const NAV_ITEMS = [
@@ -40,6 +44,20 @@ export function AppShell({
 }) {
   const pathname = usePathname();
   const isDemo = userEmail === DEMO_EMAIL;
+  const [showDemoModal, setShowDemoModal] = useState(false);
+
+  function isDemoEditControl(target: EventTarget | null) {
+    if (!(target instanceof HTMLElement)) return false;
+    if (target.closest("a, [data-demo-allow]")) return false;
+    return Boolean(target.closest("button, input, select, textarea, [role=button], [role=checkbox], [role=switch]"));
+  }
+
+  function blockDemoEdit(event: React.SyntheticEvent<HTMLElement>) {
+    if (!isDemo || !isDemoEditControl(event.target)) return;
+    event.preventDefault();
+    event.stopPropagation();
+    setShowDemoModal(true);
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-zinc-50">
@@ -75,7 +93,7 @@ export function AppShell({
                 <QuickLogger categories={categories} />
               </div>
             )}
-            <AccountMenu userEmail={userEmail} categories={categories} transactions={transactions} />
+            <AccountMenu userEmail={userEmail} categories={categories} transactions={transactions} isDemo={isDemo} />
           </div>
         </div>
       </header>
@@ -86,7 +104,42 @@ export function AppShell({
         </div>
       )}
 
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 pb-24 sm:pb-6">{children}</main>
+      <main
+        className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 pb-24 sm:pb-6"
+        onPointerDownCapture={blockDemoEdit}
+        onFocusCapture={blockDemoEdit}
+        onKeyDownCapture={(event) => {
+          if (event.key === "Enter" || event.key === " ") blockDemoEdit(event);
+        }}
+      >
+        {children}
+      </main>
+
+      <Dialog open={showDemoModal} onOpenChange={setShowDemoModal}>
+        <DialogContent title="This is a demo account">
+          <p className="text-sm leading-6 text-zinc-600">
+            Demo data is shared and read-only. Create an account or log in to add, edit, and manage your own
+            finances.
+          </p>
+          <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+            <Button variant="outline" onClick={() => setShowDemoModal(false)}>
+              Keep exploring
+            </Button>
+            <form action={leaveDemo}>
+              <input type="hidden" name="destination" value="login" />
+              <Button type="submit" variant="outline" className="w-full sm:w-auto">
+                Log in
+              </Button>
+            </form>
+            <form action={leaveDemo}>
+              <input type="hidden" name="destination" value="signup" />
+              <Button type="submit" className="w-full sm:w-auto">
+                Create an account
+              </Button>
+            </form>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <nav className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-around border-t border-zinc-200 bg-white/95 px-1 py-2 backdrop-blur sm:hidden">
         {NAV_ITEMS.slice(0, Math.ceil(NAV_ITEMS.length / 2)).map((item) => {

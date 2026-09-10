@@ -31,10 +31,12 @@ export function AccountMenu({
   userEmail,
   categories,
   transactions,
+  isDemo = false,
 }: {
   userEmail?: string | null;
   categories: Category[];
   transactions: Transaction[];
+  isDemo?: boolean;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -99,28 +101,32 @@ export function AccountMenu({
 
   return (
     <>
-      <input
-        ref={jsonInputRef}
-        type="file"
-        accept="application/json"
-        className="hidden"
-        onChange={(e) => {
-          const file = e.target.files?.[0];
-          if (file) handleImportJSON(file);
-          e.target.value = "";
-        }}
-      />
-      <input
-        ref={csvInputRef}
-        type="file"
-        accept=".csv,text/csv"
-        className="hidden"
-        onChange={(e) => {
-          const file = e.target.files?.[0];
-          if (file) handleImportCSV(file);
-          e.target.value = "";
-        }}
-      />
+      {!isDemo && (
+        <>
+          <input
+            ref={jsonInputRef}
+            type="file"
+            accept="application/json"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) handleImportJSON(file);
+              e.target.value = "";
+            }}
+          />
+          <input
+            ref={csvInputRef}
+            type="file"
+            accept=".csv,text/csv"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) handleImportCSV(file);
+              e.target.value = "";
+            }}
+          />
+        </>
+      )}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button
@@ -165,15 +171,19 @@ export function AccountMenu({
             <Table className="h-4 w-4 text-zinc-400" />
             <span>Export transactions (CSV)</span>
           </DropdownMenuItem>
-          <DropdownMenuLabel>Import backup</DropdownMenuLabel>
-          <DropdownMenuItem onSelect={() => jsonInputRef.current?.click()}>
-            <FileJson className="h-4 w-4 text-zinc-400" />
-            <span>Import from JSON backup</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem onSelect={() => csvInputRef.current?.click()}>
-            <FileUp className="h-4 w-4 text-zinc-400" />
-            <span>Import transactions (CSV)</span>
-          </DropdownMenuItem>
+          {!isDemo && (
+            <>
+              <DropdownMenuLabel>Import backup</DropdownMenuLabel>
+              <DropdownMenuItem onSelect={() => jsonInputRef.current?.click()}>
+                <FileJson className="h-4 w-4 text-zinc-400" />
+                <span>Import from JSON backup</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => csvInputRef.current?.click()}>
+                <FileUp className="h-4 w-4 text-zinc-400" />
+                <span>Import transactions (CSV)</span>
+              </DropdownMenuItem>
+            </>
+          )}
           <DropdownMenuSeparator />
           <DropdownMenuItem onSelect={handleSignOut} disabled={isPending} className="text-red-600">
             <LogOut className="h-4 w-4" />
