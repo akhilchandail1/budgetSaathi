@@ -74,6 +74,12 @@ export function AccountMenu({
     });
   }
 
+  function handleSignOut() {
+    startTransition(async () => {
+      await signOutAction();
+    });
+  }
+
   if (!userEmail) {
     return (
       <div className="flex items-center gap-2">
@@ -169,14 +175,10 @@ export function AccountMenu({
             <span>Import transactions (CSV)</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <form action={signOutAction}>
-            <DropdownMenuItem asChild>
-              <button type="submit" className="w-full text-left text-red-600">
-                <LogOut className="h-4 w-4" />
-                <span>Log out</span>
-              </button>
-            </DropdownMenuItem>
-          </form>
+          <DropdownMenuItem onSelect={handleSignOut} disabled={isPending} className="text-red-600">
+            <LogOut className="h-4 w-4" />
+            <span>Log out</span>
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </>

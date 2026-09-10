@@ -21,6 +21,10 @@ export async function signOutAction() {
   await signOut({ redirectTo: "/login" });
 }
 
+export async function startDemo() {
+  await signIn("demo", { redirectTo: "/" });
+}
+
 export async function signupAction(
   _prevState: AuthFormState,
   formData: FormData

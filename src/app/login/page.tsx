@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Suspense } from "react";
-import { loginAction } from "@/app/actions/auth";
+import { loginAction, startDemo } from "@/app/actions/auth";
 import { AuthForm } from "@/components/auth/AuthForm";
 import { Card } from "@/components/ui/card";
 
@@ -21,6 +21,11 @@ export default function LoginPage() {
             Sign up
           </Link>
         </p>
+        <form action={startDemo} className="mt-3">
+          <button type="submit" className="w-full text-center text-sm font-medium text-zinc-700 underline">
+            Explore the read-only demo
+          </button>
+        </form>
       </Card>
     </div>
   );

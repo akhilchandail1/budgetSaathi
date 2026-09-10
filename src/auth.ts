@@ -7,6 +7,7 @@ import Google from "next-auth/providers/google";
 import { z } from "zod";
 import { db } from "@/db";
 import { accounts, sessions, users, verificationTokens } from "@/db/schema";
+import { ensureDemoUser } from "@/lib/demo";
 import { seedDefaultCategories } from "@/lib/seedCategories";
 
 const credentialsSchema = z.object({
@@ -53,6 +54,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const valid = await bcrypt.compare(password, user.passwordHash);
         if (!valid) return null;
 
+        return { id: user.id, email: user.email, name: user.name };
+      },
+    }),
+    Credentials({
+      id: "demo",
+      name: "Demo",
+      credentials: {},
+      authorize: async () => {
+        const user = await ensureDemoUser();
         return { id: user.id, email: user.email, name: user.name };
       },
     }),

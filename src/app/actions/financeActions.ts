@@ -4,12 +4,14 @@ import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { auth } from "@/auth";
+import { DEMO_EMAIL } from "@/lib/demo.constants";
 import { db } from "@/db";
 import { actionPriorityValues, financeActions } from "@/db/schema";
 
 async function requireUserId() {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Not authenticated");
+  if (session.user.email === DEMO_EMAIL) throw new Error("The demo account is read-only.");
   return session.user.id;
 }
 

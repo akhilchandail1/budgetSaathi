@@ -12,6 +12,7 @@ import {
   Wallet,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { DEMO_EMAIL } from "@/lib/demo.constants";
 import { AccountMenu } from "./AccountMenu";
 import { Logo } from "./Logo";
 import { QuickLogger } from "@/components/logger/QuickLogger";
@@ -38,6 +39,7 @@ export function AppShell({
   userEmail?: string | null;
 }) {
   const pathname = usePathname();
+  const isDemo = userEmail === DEMO_EMAIL;
 
   return (
     <div className="flex min-h-screen flex-col bg-zinc-50">
@@ -68,13 +70,21 @@ export function AppShell({
             </nav>
           </div>
           <div className="flex items-center gap-2">
-            <div className="hidden sm:block">
-              <QuickLogger categories={categories} />
-            </div>
+            {!isDemo && (
+              <div className="hidden sm:block">
+                <QuickLogger categories={categories} />
+              </div>
+            )}
             <AccountMenu userEmail={userEmail} categories={categories} transactions={transactions} />
           </div>
         </div>
       </header>
+
+      {isDemo && (
+        <div className="border-b border-amber-200 bg-amber-50 px-4 py-2 text-center text-sm text-amber-800">
+          You are exploring a read-only demo. Sign up to add and manage your own data.
+        </div>
+      )}
 
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 pb-24 sm:pb-6">{children}</main>
 
@@ -98,14 +108,16 @@ export function AppShell({
         })}
 
         <div className="-mt-8 flex flex-1 justify-center">
-          <QuickLogger
-            categories={categories}
-            trigger={
-              <button className="flex h-14 w-14 items-center justify-center rounded-full bg-zinc-900 text-white shadow-lg active:scale-95">
-                <Plus className="h-6 w-6" />
-              </button>
-            }
-          />
+          {!isDemo && (
+            <QuickLogger
+              categories={categories}
+              trigger={
+                <button className="flex h-14 w-14 items-center justify-center rounded-full bg-zinc-900 text-white shadow-lg active:scale-95">
+                  <Plus className="h-6 w-6" />
+                </button>
+              }
+            />
+          )}
         </div>
 
         {NAV_ITEMS.slice(Math.ceil(NAV_ITEMS.length / 2)).map((item) => {
