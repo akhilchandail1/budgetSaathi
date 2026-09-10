@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import {
   FileJson,
   FileUp,
+  LogOut,
   PiggyBank,
   Settings as SettingsIcon,
   Table,
@@ -23,6 +24,7 @@ import {
 import { exportStoreJSON, exportTransactionsCSVFile, csvToTransactionInputs } from "@/lib/csv";
 import { importBudgetData } from "@/app/actions/importExport";
 import { addTransactionsBulk } from "@/app/actions/transactions";
+import { signOutAction } from "@/app/actions/auth";
 import type { Category, Transaction } from "@/lib/types";
 
 export function AccountMenu({
@@ -166,6 +168,15 @@ export function AccountMenu({
             <FileUp className="h-4 w-4 text-zinc-400" />
             <span>Import transactions (CSV)</span>
           </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <form action={signOutAction}>
+            <DropdownMenuItem asChild>
+              <button type="submit" className="w-full text-left text-red-600">
+                <LogOut className="h-4 w-4" />
+                <span>Log out</span>
+              </button>
+            </DropdownMenuItem>
+          </form>
         </DropdownMenuContent>
       </DropdownMenu>
     </>
