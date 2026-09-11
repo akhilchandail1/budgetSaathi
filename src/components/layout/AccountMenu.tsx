@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import {
   FileJson,
   FileUp,
+  GitFork,
   LogOut,
   PiggyBank,
   Settings as SettingsIcon,
@@ -25,6 +26,7 @@ import { exportStoreJSON, exportTransactionsCSVFile, csvToTransactionInputs } fr
 import { importBudgetData } from "@/app/actions/importExport";
 import { addTransactionsBulk } from "@/app/actions/transactions";
 import { signOutAction } from "@/app/actions/auth";
+import { GITHUB_REPOSITORY_URL } from "@/lib/project.constants";
 import type { Category, Transaction } from "@/lib/types";
 
 export function AccountMenu({
@@ -184,6 +186,13 @@ export function AccountMenu({
               </DropdownMenuItem>
             </>
           )}
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <a href={GITHUB_REPOSITORY_URL} target="_blank" rel="noreferrer">
+              <GitFork className="h-4 w-4 text-zinc-400" />
+              <span>Open source on GitHub</span>
+            </a>
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onSelect={handleSignOut} disabled={isPending} className="text-red-600">
             <LogOut className="h-4 w-4" />

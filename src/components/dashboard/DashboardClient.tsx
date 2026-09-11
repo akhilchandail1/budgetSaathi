@@ -86,8 +86,12 @@ export function DashboardClient({
       <Tabs defaultValue="expense">
         <TabsList>
           <TabsTrigger value="expense">Expenses</TabsTrigger>
-          <TabsTrigger value="income">Income</TabsTrigger>
-          <TabsTrigger value="investment">Investments</TabsTrigger>
+          <TabsTrigger value="income" data-demo-allow>
+            Income
+          </TabsTrigger>
+          <TabsTrigger value="investment" data-demo-allow>
+            Investments
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="expense" className="mt-4">
           <CategoryTable

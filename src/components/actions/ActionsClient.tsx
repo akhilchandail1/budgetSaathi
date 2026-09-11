@@ -61,7 +61,9 @@ export function ActionsClient({ actions, goals }: { actions: FinanceAction[]; go
       <Tabs defaultValue="todos">
         <TabsList>
           <TabsTrigger value="todos">To-Dos</TabsTrigger>
-          <TabsTrigger value="goals">Goals</TabsTrigger>
+          <TabsTrigger value="goals" data-demo-allow>
+            Goals
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="todos" className="mt-4">

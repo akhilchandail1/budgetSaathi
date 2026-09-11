@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { loginAction, startDemo } from "@/app/actions/auth";
 import { AuthForm } from "@/components/auth/AuthForm";
 import { Card } from "@/components/ui/card";
+import { GITHUB_REPOSITORY_URL } from "@/lib/project.constants";
 
 export default function LoginPage() {
   return (
@@ -26,6 +27,17 @@ export default function LoginPage() {
             Explore the read-only demo
           </button>
         </form>
+        <p className="mt-6 border-t border-zinc-200 pt-4 text-center text-xs text-zinc-500">
+          BudgetSaathi is open source.{" "}
+          <a
+            href={GITHUB_REPOSITORY_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="font-medium text-zinc-700 underline"
+          >
+            View it on GitHub
+          </a>
+        </p>
       </Card>
     </div>
   );
