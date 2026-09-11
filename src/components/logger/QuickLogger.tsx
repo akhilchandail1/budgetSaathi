@@ -1,13 +1,15 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Plus } from "lucide-react";
+import Link from "next/link";
+import { Plus, Settings } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { CategoryCombobox } from "./CategoryCombobox";
+import { CategoryForm } from "@/components/settings/CategoryForm";
 import { addTransaction } from "@/app/actions/transactions";
 import { evaluateAmount } from "@/lib/calc";
 import { getTodayISO } from "@/lib/format";
@@ -37,6 +39,12 @@ export function QuickLogger({
   const [note, setNote] = useState("");
   const [paymentMode, setPaymentMode] = useState<PaymentMode>("UPI");
   const [error, setError] = useState<string | null>(null);
+  const [pendingCategories, setPendingCategories] = useState<Category[]>([]);
+
+  const allCategories = useMemo(
+    () => [...categories, ...pendingCategories.filter((pc) => !categories.some((c) => c.id === pc.id))],
+    [categories, pendingCategories]
+  );
 
   const resolvedAmount = evaluateAmount(amountInput);
   const showsMath = /[+\-*/()]/.test(amountInput);
@@ -48,6 +56,7 @@ export function QuickLogger({
     setNote("");
     setPaymentMode("UPI");
     setError(null);
+    setPendingCategories([]);
   }
 
   function handleSave() {
@@ -117,7 +126,31 @@ export function QuickLogger({
 
           <div>
             <label className="mb-1 block text-xs font-medium text-zinc-500">Category</label>
-            <CategoryCombobox categories={categories} value={categoryId} onChange={setCategoryId} />
+            <CategoryCombobox categories={allCategories} value={categoryId} onChange={setCategoryId} />
+            <div className="mt-1.5 flex items-center gap-3 text-xs">
+              <CategoryForm
+                defaultType="expense"
+                onCreated={(cat) => {
+                  setPendingCategories((prev) => [...prev, cat]);
+                  setCategoryId(cat.id);
+                }}
+                trigger={
+                  <button
+                    type="button"
+                    className="flex items-center gap-1 font-medium text-zinc-600 hover:text-zinc-900"
+                  >
+                    <Plus className="h-3.5 w-3.5" /> Add category
+                  </button>
+                }
+              />
+              <Link
+                href="/settings"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-1 text-zinc-400 hover:text-zinc-700"
+              >
+                <Settings className="h-3.5 w-3.5" /> Manage in Settings
+              </Link>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">

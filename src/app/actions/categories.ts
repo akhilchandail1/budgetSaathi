@@ -6,8 +6,9 @@ import { z } from "zod";
 import { auth } from "@/auth";
 import { DEMO_EMAIL } from "@/lib/demo.constants";
 import { db } from "@/db";
-import { categoryHasTransactions } from "@/db/queries";
+import { categoryHasTransactions, toCategory } from "@/db/queries";
 import { categories, categoryTypeValues } from "@/db/schema";
+import type { Category } from "@/lib/types";
 
 const categorySchema = z.object({
   name: z.string().trim().min(1, "Name is required").max(60),
@@ -29,22 +30,25 @@ function revalidateAll() {
   revalidatePath("/summary");
 }
 
-export type CategoryActionState = { error: string | null };
+export type CategoryActionState = { error: string | null; category?: Category };
 
 export async function createCategory(input: unknown): Promise<CategoryActionState> {
   const userId = await requireUserId();
   const parsed = categorySchema.safeParse(input);
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Invalid category" };
 
-  await db.insert(categories).values({
-    userId,
-    name: parsed.data.name,
-    type: parsed.data.type,
-    icon: parsed.data.icon,
-    monthlyBudget: parsed.data.monthlyBudget != null ? String(parsed.data.monthlyBudget) : null,
-  });
+  const [row] = await db
+    .insert(categories)
+    .values({
+      userId,
+      name: parsed.data.name,
+      type: parsed.data.type,
+      icon: parsed.data.icon,
+      monthlyBudget: parsed.data.monthlyBudget != null ? String(parsed.data.monthlyBudget) : null,
+    })
+    .returning();
   revalidateAll();
-  return { error: null };
+  return { error: null, category: toCategory(row) };
 }
 
 export async function updateCategory(id: string, input: unknown): Promise<CategoryActionState> {

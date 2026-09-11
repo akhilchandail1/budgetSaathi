@@ -19,7 +19,7 @@ import type { CouponItem, CouponType, CouponValueType } from "@/lib/coupons";
 import type { ActionPriority, FinanceAction } from "@/lib/financeActions";
 import type { FinancialGoal, GoalStatus } from "@/lib/goals";
 
-function toCategory(row: typeof categories.$inferSelect): Category {
+export function toCategory(row: typeof categories.$inferSelect): Category {
   return {
     id: row.id,
     name: row.name,

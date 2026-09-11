@@ -15,10 +15,12 @@ export function CategoryForm({
   category,
   defaultType,
   trigger,
+  onCreated,
 }: {
   category?: Category;
   defaultType: CategoryType;
   trigger: React.ReactNode;
+  onCreated?: (category: Category) => void;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -65,6 +67,7 @@ export function CategoryForm({
       }
       reset();
       setOpen(false);
+      if (!category && result.category) onCreated?.(result.category);
       router.refresh();
     });
   }

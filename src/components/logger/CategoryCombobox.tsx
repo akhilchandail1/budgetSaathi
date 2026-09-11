@@ -49,7 +49,7 @@ export function CategoryCombobox({
       >
         <span className={cn("flex items-center gap-2", !selected && "text-zinc-400")}>
           {selectedIcon}
-          {selected ? selected.name : "Select category…"}
+          {selected ? selected.name : categories.length === 0 ? "No categories yet" : "Select category…"}
         </span>
         <ChevronDown className="h-4 w-4 text-zinc-400" />
       </button>
